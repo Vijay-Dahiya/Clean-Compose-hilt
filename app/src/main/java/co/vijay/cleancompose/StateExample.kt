@@ -1,6 +1,5 @@
 package co.vijay.cleancompose
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,12 +14,9 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -32,37 +28,34 @@ fun NotificationScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize(1f)
     ) {
-        NotificationCounter()
-        MessageBar()
+        // adding this variable here instead of the fun where it is needed is called State Hoisting
+        val count = rememberSaveable { mutableIntStateOf(0) }
+        NotificationCounter(count.intValue) { count.intValue++ }
+        MessageBar(count.intValue)
     }
 }
 
 @Composable
-fun MessageBar() {
+fun MessageBar(count: Int) {
     Card(elevation = CardDefaults.cardElevation(4.dp)) {
         Row(
             modifier = Modifier.padding(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(imageVector = Icons.Outlined.Favorite, contentDescription = "", modifier = Modifier.padding(4.dp))
-            Text(text = "Message sent so far - 10")
+            Text(text = "Message sent so far - $count")
         }
 
     }
 }
 
 @Composable
-fun NotificationCounter() {
-    val count = rememberSaveable {
-        mutableIntStateOf(0)
-    }
-
+fun NotificationCounter(count: Int, increase: () -> Unit) {
     Column {
-        Text(text = "You have sent ${count.intValue} notification")
+        Text(text = "You have sent $count notification")
     }
     Button(onClick = {
-        count.intValue++
-        Log.d("Vijay", "NotificationCounterIncreased: $count")
+        increase()
     }) {
         Text(text = "Send Notification")
     }
