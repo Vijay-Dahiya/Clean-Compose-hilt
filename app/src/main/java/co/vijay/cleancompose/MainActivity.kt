@@ -32,7 +32,8 @@ class MainActivity : ComponentActivity() {
         setContent {
 //            PreviewFun()
 
-            RecyclerViewCategory()
+//            RecyclerViewCategory()
+            NotificationScreen()
         }
     }
 }
